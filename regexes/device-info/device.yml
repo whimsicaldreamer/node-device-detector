@@ -1244,6 +1244,10 @@ infinix:
   x660c: '->s5 pro'
   x660b: '->s5 pro'
   x660: '->s5 pro'
+  hot 12 play nfc: ''
+  x6816d: '->hot 12 play nfc'
+  hot 12 play: ''
+  x6816c: '->hot 12 play'
 
 allview:
   2 speed quad: ''
@@ -1265,8 +1269,8 @@ allview:
   a6 duo: ''
   a6 lite: ''
   a7 lite: ''
-  a8 lite: ''
-  a9 lite: ''
+  a8 lite: 'RS=480x854;WT=140;DS=5.2;SZ=72.4x145x9.55;RM=1024;SM=2;OI=1;OV=7;RE=2017.02'
+  a9 lite: 'RS=480x854;WT=152;DS=5.2;SZ=75.34x149.2x9.9;RM=1024;SM=2;OI=1;OV=7;RE=2017.09'
   alldro 2 speed duo: ''
   alldro 3 speed quad: ''
   alldro p4: ''

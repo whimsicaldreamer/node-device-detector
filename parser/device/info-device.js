@@ -1,56 +1,6 @@
 const ParserAbstract = require('./../abstract-parser');
 const DataPacker = require('./../../lib/data-packer');
 
-
-/**
- * @typedef InfoResult
- * @param {InfoDisplay} display
- * @param {number|null} sim
- * @param {string|InfoSize} size
- * @param {string} weight
- * @param {string|null} release
- * @param {string|null} os
- * @param {InfoHardware} hardware
- * @param {InfoPerformance} performance
- *
- * @typedef InfoResolution
- * @param {string} width
- * @param {string} height
- *
- * @typedef InfoDisplay
- * @param {string} size
- * @param {string|InfoResolution} resolution
- * @param {string} ratio
- * @param {string} ppi
- *
- * @typedef InfoPerformance
- * @param {number} antutu
- *
- * @typedef InfoHardwareCPU:
- * @param {string} name
- * @param {string} type
- * @param {number} cores
- * @param {number} clock_rate
- * @param {string|null} process
- * @param {number} gpu_id
- *
- * @typedef InfoHardwareGPU:
- * @param {string} name
- * @param {number} clock_rate
- *
- * @typedef InfoHardware
- * @param {number} ram
- * @param {number} cpu_id
- * @param {InfoHardwareCPU} cpu
- * @param {InfoHardwareGPU} gpu
- *
- * @typedef InfoSize
- * @param {string} width
- * @param {string} height
- * @param {string} thickness
- *
- */
-
 /*
 
 ### Get more information about a device (experimental)
@@ -88,7 +38,7 @@ infoDevice.setResolutionConvertObject(true);
  */
 const castResolutionToObject = (size) => {
   let [width, height] = size.split('x');
-  return { width, height };
+  return {width, height};
 };
 /**
  * Convert string 100x100x100 to object {width, height,thickness}
@@ -97,7 +47,7 @@ const castResolutionToObject = (size) => {
  */
 const castSizeToObject = (size) => {
   let [width, height, thickness] = size.split('x');
-  return { width, height, thickness };
+  return {width, height, thickness};
 };
 
 /**
@@ -124,8 +74,8 @@ const getDataByIdInCollection = (collection, id) => {
  */
 const castResolutionPPI = (width, height, size) => {
   return Math.round(
-    Math.sqrt(Math.pow(parseInt(width), 2) + Math.pow(parseInt(height), 2)) /
-      parseFloat(size)
+      Math.sqrt(Math.pow(parseInt(width), 2) + Math.pow(parseInt(height), 2)) /
+      parseFloat(size),
   );
 };
 
@@ -149,22 +99,20 @@ const gcd = (u, v) => {
 
 const mergeDeep = (target, source) => {
   const isObject = (obj) =>
-    obj && typeof obj === 'object' && !Array.isArray(obj);
+      obj && typeof obj === 'object' && !Array.isArray(obj);
 
   const isDeep = (prop) =>
-    isObject(source[prop]) &&
-    target.hasOwnProperty(prop) &&
-    isObject(target[prop]);
+      isObject(source[prop]) &&
+      target.hasOwnProperty(prop) &&
+      isObject(target[prop]);
 
-  const replaced = Object.getOwnPropertyNames(source)
-    .map((prop) => ({
-      [prop]: isDeep(prop)
+  const replaced = Object.getOwnPropertyNames(source).map((prop) => ({
+    [prop]: isDeep(prop)
         ? mergeDeep(target[prop], source[prop])
         : source[prop]
-        ? source[prop]
-        : target[prop],
-    }))
-    .reduce((a, b) => ({ ...a, ...b }), {});
+            ? source[prop]
+            : target[prop],
+  })).reduce((a, b) => ({...a, ...b}), {});
 
   return {
     ...target,
@@ -184,9 +132,7 @@ const castResolutionRatio = (width, height) => {
 };
 
 const sortObject = (o) =>
-  Object.keys(o)
-    .sort()
-    .reduce((r, k) => ((r[k] = o[k]), r), {});
+    Object.keys(o).sort().reduce((r, k) => ((r[k] = o[k]), r), {});
 
 // help block
 
@@ -219,7 +165,7 @@ const SHORT_KEYS = {
   GP: 'hardware.gpu_id',        // int: <id>
   OS: 'os',                     // string: Android 4.4
   OI: 'os_id',                  // int: OS ID
-  OV: 'os_version',             // int: OS ID
+  OV: 'os_version',             // string: OS version
   SM: 'sim',                    // int: count SIM
   TT: 'performance.antutu',     // int: antutu score
 };
@@ -247,14 +193,14 @@ class InfoDevice extends ParserAbstract {
     super.loadCollection();
     // load hardware properties
     this.collectionHardwareCPU = this.loadYMLFile(
-      'device-info/hardware-cpu.yml'
+        'device-info/hardware-cpu.yml',
     );
     this.collectionHardwareGPU = this.loadYMLFile(
-      'device-info/hardware-gpu.yml'
+        'device-info/hardware-gpu.yml',
     );
     // load software properties
     this.collectionSoftware = this.loadYMLFile(
-      'device-info/software.yml'
+        'device-info/software.yml',
     );
   }
 
@@ -276,7 +222,7 @@ class InfoDevice extends ParserAbstract {
 
   /**
    * @param id
-   * @returns {null|*}
+   * @returns {null|String}
    */
   getOsById(id) {
     if (this.collectionSoftware['os'] === void 0) {
@@ -285,6 +231,10 @@ class InfoDevice extends ParserAbstract {
     return getDataByIdInCollection(this.collectionSoftware['os'], id);
   }
 
+  /**
+   * @param {number} id
+   * @returns {null|ResultInfoHardwareGPU}
+   */
   getGpuById(id) {
     if (this.collectionHardwareGPU['gpu'] === void 0) {
       return null;
@@ -292,6 +242,10 @@ class InfoDevice extends ParserAbstract {
     return getDataByIdInCollection(this.collectionHardwareGPU['gpu'], id);
   }
 
+  /**
+   * @param {number} id
+   * @returns {null|ResultInfoHardwareCPU}
+   */
   getCpuById(id) {
     if (this.collectionHardwareCPU['cpu'] === void 0) {
       return null;
@@ -313,8 +267,8 @@ class InfoDevice extends ParserAbstract {
     let model = deviceModel.trim().toLowerCase();
 
     if (
-      this.collection[brand] === void 0 ||
-      this.collection[brand][model] === void 0
+        this.collection[brand] === void 0 ||
+        this.collection[brand][model] === void 0
     ) {
       return null;
     }
@@ -338,30 +292,39 @@ class InfoDevice extends ParserAbstract {
     return sortObject(result);
   }
 
+  /**
+   * @param {ResultInfoDevice|{}} result
+   */
   prepareResultSize(result) {
     if (this.sizeConvertObject && result.size) {
       result.size = castSizeToObject(result.size);
     }
   }
 
+  /**
+   * @param {ResultInfoDevice|{}} result
+   */
   prepareResultSoftware(result) {
-    if (result.os_id) {
+    if (result && result.os_id) {
       let output = [];
       let os = this.getOsById(result.os_id);
       delete result.os_id;
       if (os !== null) {
         output.push(os.name);
       }
-      if(result.os_version) {
+      if (result.os_version) {
         output.push(result.os_version);
         delete result.os_version;
       }
-      if(output.length === 2) {
+      if (output.length === 2) {
         result.os = output.join(' ');
       }
     }
   }
 
+  /**
+   * @param {ResultInfoDevice|{}} result
+   */
   prepareResultHardware(result) {
     // set hardware data
     if (result.hardware) {
@@ -385,14 +348,17 @@ class InfoDevice extends ParserAbstract {
     }
   }
 
+  /**
+   * @param {ResultInfoDevice|{}} result
+   */
   prepareResultDisplay(result) {
     // set display data
     if (result.display) {
       // calculate ration & ppi
       let resolution =
-        result.display && result.display.resolution
-          ? castResolutionToObject(result.display.resolution)
-          : '';
+          result.display && result.display.resolution
+              ? castResolutionToObject(result.display.resolution)
+              : '';
 
       let ratio = '';
       let ppi = '';
@@ -403,9 +369,9 @@ class InfoDevice extends ParserAbstract {
         if (resolutionWidth && resolutionHeight) {
           if (result.display.size) {
             ppi = castResolutionPPI(
-              resolutionWidth,
-              resolutionHeight,
-              result.display.size
+                resolutionWidth,
+                resolutionHeight,
+                result.display.size,
             );
           }
           ratio = castResolutionRatio(resolutionWidth, resolutionHeight);
@@ -414,8 +380,8 @@ class InfoDevice extends ParserAbstract {
 
       result.display.size = result.display.size ? result.display.size : null;
       result.display.resolution = this.resolutionConvertObject
-        ? resolution
-        : result.display.resolution;
+          ? resolution
+          : result.display.resolution;
 
       if (ratio) {
         result.display.ratio = ratio;
@@ -429,10 +395,10 @@ class InfoDevice extends ParserAbstract {
 
   /**
    * Converts the values of the performance section to the desired format type
-   * @param result {InfoResult}
+   * @param result {ResultInfoDevice|{}}
    */
   prepareResultPerformance(result) {
-    if(result.performance !== void 0 && result.performance.antutu !== void 0) {
+    if (result.performance !== void 0 && result.performance.antutu !== void 0) {
       result.performance.antutu = parseInt(result.performance.antutu);
     }
   }
@@ -441,7 +407,7 @@ class InfoDevice extends ParserAbstract {
    * The main method for obtaining information on brand and device
    * @param {String} deviceBrand
    * @param {String} deviceModel
-   * @return {InfoResult|null}
+   * @return {ResultInfoDevice|null}
    */
   info(deviceBrand, deviceModel) {
     return this.find(deviceBrand, deviceModel, {});
