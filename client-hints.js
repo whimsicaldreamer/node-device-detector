@@ -13,6 +13,16 @@ const CH_UA = 'sec-ch-ua';
 const CH_BITNESS = 'sec-ch-ua-bitness';
 const CH_UA_PREFERS_COLOR_SCHEME = 'sec-ch-prefers-color-scheme';
 
+/***
+ * @typedef ClientMetricInfo
+ * @type {number} cpu
+ * @type {string} gpu
+ * @type {number} ram
+ * @type {number} pixelRatio
+ * @type {number} screenWidth
+ * @type {number} screenHeight
+ */
+
 /*
   sec-ch-ua',ua,
   sec-ch-ua-platform, ua-platform',
@@ -86,7 +96,9 @@ class ClientHints {
   }
 
   /**
-   * @param {{}} headers - key/value
+   * check headers for support client hints
+   *
+   * @param {{}|JSONObject} headers - key/value
    * @return {boolean}
    * @example
    * ```js
@@ -100,9 +112,10 @@ class ClientHints {
   }
 
   /**
-   * @param objHeaders
+   * @param {{}|JSONObject} objHeaders - server-side http headers information
+   * @param {{}|JSONObject|ClientMetricInfo} objClientMetric - browser information (ram cpu, gpu)
    */
-  parse(objHeaders) {
+  parse(objHeaders, objClientMetric) {
     let headers = {};
     for( let key in objHeaders) {
       headers[key.toLowerCase()] = objHeaders[key];
@@ -145,6 +158,10 @@ class ClientHints {
     result.app = helper.trimChars(xRequested, '"')
     if (result.app.toLowerCase() === 'xmlhttprequest') {
       result.app = '';
+    }
+
+    if (objClientMetric) {
+      result.clientMetric = objClientMetric;
     }
 
     return result;

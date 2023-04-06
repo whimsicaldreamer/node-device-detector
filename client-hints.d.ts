@@ -2,7 +2,7 @@ export default class ClientHints {
   static getHeaderClientHints(): JSONObject;
   static isSupport(headers: JSONObject): boolean;
 
-  parse(objHeaders: JSONObject): JSONObject;
+  parse(objHeaders: JSONObject, objClientMetric: JSONObject): JSONObject;
 }
 
 export type JSONValue =
