@@ -4,7 +4,7 @@ const CLIENT_TYPES = require('./parser/const/client-type');
 
 /**
  * get device type string
- * @param result
+ * @param {DetectResult|{}} result
  * @returns {string|null}
  */
 const getDeviceType = (result) => {
@@ -22,7 +22,7 @@ const getDeviceTypeIdForName = (name) => {
 
 /**
  * get device type id
- * @param result
+ * @param {DetectResult|{}} result
  * @returns {number|null}
  */
 const getDeviceTypeId = (result) => {
@@ -48,7 +48,7 @@ const isTablet = (result) => {
 };
 /**
  * is device type phablet
- * @param result
+ * @param {DetectResult|{}} result
  * @returns {boolean}
  */
 const isPhablet = (result) => {
@@ -57,7 +57,7 @@ const isPhablet = (result) => {
 
 /**
  * is feature phone (push-button telephones)
- * @param result
+ * @param {DetectResult|{}} result
  * @returns {boolean}
  */
 const isFeaturePhone = (result) => {
@@ -65,7 +65,7 @@ const isFeaturePhone = (result) => {
 };
 /**
  * is device type smartphone
- * @param result
+ * @param {DetectResult|{}} result
  * @returns {boolean}
  */
 const isSmartphone = (result) => {
@@ -83,7 +83,7 @@ const isCar = (result) => {
 
 /**
  * is device type mobile (feature phone, smartphone or phablet)
- * @param result
+ * @param {DetectResult|{}} result
  * @returns {boolean}
  */
 const isMobile = (result) => {
@@ -92,7 +92,7 @@ const isMobile = (result) => {
 
 /**
  * is device type desktop
- * @param result
+ * @param {DetectResult|{}} result
  * @returns {boolean}
  */
 const isDesktop = (result) => {
@@ -101,7 +101,7 @@ const isDesktop = (result) => {
 
 /**
  * is os android
- * @param result
+ * @param {DetectResult|{}} result
  * @returns {boolean}
  */
 const isAndroid = (result) => {
@@ -110,7 +110,7 @@ const isAndroid = (result) => {
 
 /**
  * is os ios
- * @param result
+ * @param {DetectResult|{}} result
  * @returns {boolean}
  */
 const isIOS = (result) => {
@@ -119,7 +119,7 @@ const isIOS = (result) => {
 
 /**
  * is device type tv
- * @param result
+ * @param {DetectResult|{}} result
  * @returns {boolean}
  */
 const isTv = (result) => {
@@ -128,7 +128,7 @@ const isTv = (result) => {
 
 /**
  * is device type console (xBox, PlayStation, Nintendo etc)
- * @param result
+ * @param {DetectResult|{}} result
  * @returns {boolean}
  */
 const isConsole = (result) => {
@@ -137,7 +137,7 @@ const isConsole = (result) => {
 
 /**
  * is device type portable camera
- * @param result
+ * @param {DetectResult|{}} result
  * @returns {boolean}
  */
 const isCamera = (result) => {
@@ -146,7 +146,7 @@ const isCamera = (result) => {
 
 /**
  * is device type portable media player
- * @param result
+ * @param {DetectResult|{}} result
  * @returns {boolean}
  */
 const isPortableMediaPlayer = (result) => {
@@ -155,7 +155,7 @@ const isPortableMediaPlayer = (result) => {
 
 /**
  * is device type smart speaker (Alisa, Alexa, HomePod etc)
- * @param result
+ * @param {DetectResult|{}} result
  * @returns {boolean}
  */
 const isSmartSpeaker = (result) => {
@@ -165,7 +165,7 @@ const isSmartSpeaker = (result) => {
 /**
  * is device type peripheral (portable terminal, post terminal,
  * single board computers, portable projector)
- * @param result
+ * @param {DetectResult|{}} result
  * @returns {boolean}
  */
 const isPeripheral = (result) => {
@@ -174,7 +174,7 @@ const isPeripheral = (result) => {
 
 /**
  * is device type smart display (LCD panel or interactive panel)
- * @param result
+ * @param {DetectResult|{}} result
  * @returns {boolean}
  */
 const isSmartDisplay = (result) => {
@@ -183,7 +183,7 @@ const isSmartDisplay = (result) => {
 
 /**
  * is device type wearable (watches, headsets)
- * @param result
+ * @param {DetectResult|{}} result
  * @returns {boolean}
  */
 const isWearable = (result) => {
@@ -192,7 +192,7 @@ const isWearable = (result) => {
 
 /**
  * is client type browser
- * @param result
+ * @param {DetectResult|{}} result
  * @returns {boolean}
  */
 const isBrowser = (result) => {
@@ -201,7 +201,7 @@ const isBrowser = (result) => {
 
 /**
  * is client type app (any type of client other than browser)
- * @param result
+ * @param {DetectResult|{}} result
  * @returns {boolean}
  */
 const isApp = (result) => {
@@ -210,7 +210,7 @@ const isApp = (result) => {
 
 /**
  * is client type app desktop
- * @param result
+ * @param {DetectResult|{}} result
  * @returns {boolean}
  */
 const isDesktopApp = (result) => {
@@ -219,13 +219,12 @@ const isDesktopApp = (result) => {
 
 /**
  * is client type app mobile
- * @param result
+ * @param {DetectResult|{}} result
  * @returns {boolean}
  */
 const isMobileApp = (result) => {
   return isApp(result) && (isMobile(result) || isTablet(result));
 };
-
 
 module.exports = {
   getDeviceType,
