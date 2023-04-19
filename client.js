@@ -190,20 +190,24 @@ function DeviceCollector() {
     return /iPhone|iPad|Macintosh|Ipod/.exec(navigator.userAgent) !== null;
   };
 
-  this.getBanchmarkCPU = function() {};
-  this.getBanchmarkGPU = function() {};
+  this.getBenchmarkGPU = function() {};
+  this.getBenchmarkCPU = function() {};
 
-  this.grab = function() {
+  this.getDeviceMemory = function() {
+    return 'deviceMemory' in navigator ? navigator.deviceMemory : null;
+  }
+
+  this.info = function() {
     return {
       useragent: navigator.userAgent,
       width: this.getWidth(),
       height: this.getHeight(),
       ratio: this.getRatio(),
-      ram: 'deviceMemory' in navigator ? navigator.deviceMemory : null,
+      ram: this.getDeviceMemory(),
       gpu: this.getGPU(),
       cpuCores: navigator.hardwareConcurrency,
-      gpuBanchmark: this.getBanchmarkGPU(),
-      cpuBanchmark: this.getBanchmarkCPU(),
+      gpuBenchmark: this.getBenchmarkGPU(),
+      cpuBenchmark: this.getBenchmarkCPU(),
     };
   };
 
