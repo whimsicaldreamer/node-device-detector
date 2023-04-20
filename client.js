@@ -25,6 +25,7 @@ function DeviceCollector() {
         gl.getExtension('WEBGL_debug_renderer_info').UNMASKED_RENDERER_WEBGL,
     ) : null;
   };
+
   this.getRatio = function() {
     return window.devicePixelRatio;
   };
@@ -169,7 +170,8 @@ function DeviceCollector() {
     const pixelId = calculateMagicPixelId(gl);
     let chipsets = [];
     if (pixelId === codeDefault) {
-      chipsets = possibleChipsets.filter(([, , iosVersion]) => iosVersion >= 14);
+      chipsets = possibleChipsets.filter(
+          ([, , iosVersion]) => iosVersion >= 14);
     } else {
       chipsets = possibleChipsets.filter(([, id]) => id === pixelId);
       if (!chipsets.length) {
@@ -177,25 +179,156 @@ function DeviceCollector() {
       }
     }
 
-    const match = /\) Version\/([\d.]+)/i.exec(navigator.userAgent);
-    const iosVersion = match ? match[1] : 0;
-
-
     return {
-      chipsets
-    }
+      chipsets,
+    };
   };
 
   this.isAppleFamily = function() {
     return /iPhone|iPad|Macintosh|Ipod/.exec(navigator.userAgent) !== null;
   };
 
-  this.getBenchmarkGPU = function() {};
-  this.getBenchmarkCPU = function() {};
+  this._cpuTest2 = function() {
+    function makeMatrix(size = 2048) {
+      let matrix = [];
+      for (let i = 0; i < size; i++) {
+        matrix[i] = [];
+        for (let j = 0; j < size; j++) {
+          matrix[i][j] = Math.random();
+        }
+      }
+      return matrix;
+    }
+
+    if (this.isAppleFamily()) {
+      let sec = this.performance();
+      makeMatrix();
+      return this.performance() - sec;
+    }
+    let sec = this.performance();
+    makeMatrix(512);
+    return this.performance() - sec;
+  };
+
+  this._cpuTest1 = function() {
+    function benchmark(num, timeLimit = 200, steps = 9) {
+      let r = 0;
+      for (let sec, c, l = 0, a = Math.ceil(1e3 * num), d = (16384 < a &&
+      (a = 16384, num = 16.384), new Uint32Array(a)), o = 0; o <
+      steps; o++) {
+        for (sec = this.performance(), c = 0; c <
+        1e3; c++) window.crypto.getRandomValues(d);
+        if (l += sec = this.performance() - sec, (0 === o || sec < r) &&
+        (r = sec), 3 <= o && timeLimit <
+        l) break;
+      }
+      return parseFloat((r / num).toFixed(3));
+    }
+
+    if (!('crypto' in window)) {
+      return -1;
+    }
+
+    let operations;
+    let timeLimit = 200, firstTime = this.performance(),
+        e = benchmark(.5, timeLimit, 9);
+    timeLimit -= this.performance() - firstTime, e < 20 &&
+    (e = benchmark(20 / e, timeLimit, 30)),
+        operations = e;
+    return operations;
+  };
+
+  /**
+   *
+   * @param str
+   * @returns {number}
+   */
+  this.fnvHash = function(str) {
+    let h = 0x811c9dc5;
+    for (let i = 0; i < str.length; ++i) {
+      h ^= str.charCodeAt(i);
+      h += (h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24);
+    }
+    return h >>> 0;
+  };
+
+  this.getBenchmarkGPU = function() {
+    return [
+      this._cpuTest1(),
+      this._cpuTest2(),
+    ].reduce((prev, cursor) => prev + cursor, 0);
+  };
+
+  this.hashImage = function() {
+    function drawImage(canvas) {
+      canvas.width = 67;
+      canvas.height = 67;
+      let ctx = canvas.getContext('2d', {
+        alpha: true,
+        textBaseline: 'top',
+      });
+      if (ctx != null) {
+        // Configure the canvas context.
+        let text = 'DeviceText';
+        ctx.imageSmoothingQuality = 'low';
+        ctx.imageSmoothingEnabled = true;
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.globalAlpha = 1;
+        ctx.miterLimit = Infinity;
+        ctx.filter = 'none';
+        ctx.lineCap = 'butt';
+        ctx.lineDashOffset = 0;
+        ctx.lineJoin = 'miter';
+        ctx.font = '16px \'Arial\'';
+        ctx.lineWidth = 2;
+        if (ctx.setLineDash !== void 0) {
+          ctx.setLineDash([10, 20]);
+        }
+        ctx.shadowColor = 'black';
+        ctx.shadowOffsetX = -3;
+        ctx.shadowOffsetY = -5;
+        ctx.rotate(.05);
+        ctx.fillStyle = '#E06';
+        ctx.fillRect(125, 1, 62, 20);
+        ctx.fillStyle = '#0B7';
+        ctx.fillText(text, 2, 15);
+        ctx.fillStyle = '#FF5';
+        ctx.fillText(text, 4, 17);
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = 'blue';
+        ctx.rotate(-.15);
+        ctx.fillRect(-20, 25, 234, 5);
+      }
+      return canvas.toDataURL();
+    }
+
+    let hash = 0;
+    let canvas = document.createElement('canvas');
+    let imageData = drawImage(canvas);
+    if (canvas) {
+      hash = this.fnvHash(imageData);
+    }
+    return hash;
+  };
+
+  // https://github.com/51Degrees/Renderer/blob/master/renderer.js
+  this.hashImage3d = function() {
+
+  };
+
+  this.getBenchmarkCPU = function() {
+
+  };
+
+  this.performance = function() {
+    return 'performance' in window
+        ? window.performance.now()
+        : (new Date).getTime();
+  };
 
   this.getDeviceMemory = function() {
     return 'deviceMemory' in navigator ? navigator.deviceMemory : null;
-  }
+  };
 
   this.info = function() {
     return {
@@ -205,6 +338,7 @@ function DeviceCollector() {
       ratio: this.getRatio(),
       ram: this.getDeviceMemory(),
       gpu: this.getGPU(),
+      colorDepth: screen.colorDepth,
       cpuCores: navigator.hardwareConcurrency,
       gpuBenchmark: this.getBenchmarkGPU(),
       cpuBenchmark: this.getBenchmarkCPU(),

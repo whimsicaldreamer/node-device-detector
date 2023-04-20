@@ -15,7 +15,7 @@ function matchUserAgent(str, userAgent) {
 }
 
 /**
- *
+ * Compare two value for fuzzy operator
  * @param val1
  * @param val2
  * @returns {boolean}
@@ -26,6 +26,11 @@ function fuzzyCompare(val1, val2) {
     val2.replace(/ /gi, '').toLowerCase();
 }
 
+/**
+ * Create fast hash
+ * @param {string} str
+ * @returns {string}
+ */
 function createHash(str) {
   var hash = 0, i = 0, len = str.length;
   while (i < len) {
@@ -85,6 +90,7 @@ function versionTruncate(version, maxMinorParts) {
 }
 
 /**
+ * Checks for the presence of a string in the UA `Android` + `Tablet`
  * @param {string} userAgent
  * @returns {boolean}
  */
@@ -95,6 +101,7 @@ function hasAndroidTableFragment(userAgent) {
 }
 
 /**
+ * Checks for the presence of a string in the UA `Opera Tablet`
  * @param {string} userAgent
  * @returns {boolean}
  */
@@ -103,7 +110,7 @@ function hasOperaTableFragment(userAgent) {
 }
 
 /**
- * Checks for the presence of a string in the UATouch
+ * Checks for the presence of a string in the UA `Touch`
  * @param {string} userAgent
  * @returns {boolean}
  */
@@ -112,6 +119,7 @@ function hasTouchFragment(userAgent) {
 }
 
 /**
+ * Checks for the presence of a string in the UA `Android` + `Mobile`
  * @param {string} userAgent
  * @returns {boolean}
  */
@@ -120,7 +128,7 @@ function hasAndroidMobileFragment(userAgent) {
 }
 
 /**
- * All devices running Opera TV Store are assumed to be a tv
+ * Checks for the presence of a string in the UA `Opera TV Store` or `OMI`
  * @param {string} userAgent
  * @returns {boolean}
  */
@@ -129,7 +137,7 @@ function hasOperaTVStoreFragment(userAgent) {
 }
 
 /**
- * All devices containing TV fragment are assumed to be a tv
+ * Checks for the presence of a string with TV prefixes
  * @param {string} userAgent
  * @returns {boolean}
  */
@@ -138,7 +146,7 @@ function hasAndroidTVFragment(userAgent) {
 }
 
 /**
- * All devices running Tizen TV or SmartTV are assumed to be a tv
+ * Checks for the presence of a string in the UA `SmartTV` or `TizenTV`
  * @param {string} userAgent
  * @returns {boolean}
  */
@@ -200,8 +208,7 @@ function hasFile(file) {
 
 /**
  * Remove chars for string
- *
- * @param {} str
+ * @param {string} str
  * @param {string} chars
  * @returns {any}
  */
