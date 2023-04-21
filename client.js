@@ -44,9 +44,9 @@ function DeviceCollector() {
     },
     6: {
       name: 'POCO M4 Max',
-      width :1080.75, height:2400.75, ratio: 2.75,
+      width: 1080.75, height: 2400.75, ratio: 2.75,
       c: [30, 33],
-    }
+    },
 
   };
 
@@ -620,7 +620,7 @@ function DeviceCollector() {
       gpuBenchmark: this.getBenchmarkGPU(),
       cpuBenchmark: this.getBenchmarkCPU(),
     };
-
+    data['model'] = this.getDeviceName(data);
     return data;
   };
 
@@ -634,10 +634,9 @@ function DeviceCollector() {
       if (!row) {
         continue;
       }
-      let has = row.width === data.width &&
-          row.height === data.height &&
+      let has = ((row.width === data.width && row.height === data.height) ||
+          (row.width === data.height && row.height === data.width)) &&
           row.ratio === data.ratio;
-
       if (has) {
         return row.name;
       }
