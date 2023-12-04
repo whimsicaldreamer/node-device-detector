@@ -68,13 +68,23 @@ class ParserAbstract {
   }
 
   /**
+   * helper prepare regexp string added auto escape `\`, '++` slashes
+   * @param str {string}
+   * @returns {string}
+   */
+  normalizeBaseRegExp(str) {
+    str = str.replace(new RegExp('/', 'g'), '\\/');
+    str = str.replace(new RegExp('\\+\\+', 'g'), '+');
+    return str;
+  }
+
+  /**
    * helper prepare base regExp + part regExp
    * @param {string} str
    * @return {RegExp}
    */
   getBaseRegExp(str) {
-    str = str.replace(new RegExp('/', 'g'), '\\/');
-    str = str.replace(new RegExp('\\+\\+', 'g'), '+');
+    str = this.normalizeBaseRegExp(str);
     str = '(?:^|[^A-Z0-9_-]|[^A-Z0-9-]_|sprd-|MZ-)(?:' + str + ')';
     return new RegExp(str, 'i');
   }
